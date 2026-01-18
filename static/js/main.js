@@ -82,11 +82,15 @@ function populateEventList() {
     li.innerHTML = `<div>${ev.title}</div><div>${ev.city}, ${ev.country}</div><div>${formatDate(ev.ts)}</div>`;
     li.addEventListener('click', () => {
       slider.noUiSlider.set(index);
-      map.flyTo([ev.lat, ev.lon], 6, { duration: 0.8 });
+      map.flyTo([ev.lat, ev.lon], 6, { duration: 0.4 });
     });
     eventList.appendChild(li);
     eventListItems.push(li);
   });
+  // Click the first event on init
+  if (eventListItems.length > 0) {
+    eventListItems[0].click();
+  }
 }
 
 function highlightCurrentEvent() {
@@ -237,39 +241,16 @@ function initTimeline() {
     dateDisplay.textContent = formatDate(uptoTs);
     updateMarkers(uptoTs);
     highlightCurrentEvent();
+    // Update sidepanel description
+    const desc = document.getElementById('event-description');
+    desc.innerHTML = `<h2>${events[index].title}</h2><h3>${events[index].date}</h3><p>${events[index].description || 'No description available'}</p>`;
   });
 
-  let playing = false;
-
   playBtn.addEventListener('click', () => {
-    if (playing) {
-      playing = false;
-      playBtn.textContent = 'Play';
-      if (isAnimating) {
-        cancelAnimation = true;
-      }
-      // Note: can't easily cancel recursive setTimeout, but setting playing=false will stop advancing
-    } else {
-      playing = true;
-      playBtn.textContent = 'Pause';
-      const advance = () => {
-        if (playing && !isAnimating) {
-          const curIndex = Math.round(Number(slider.noUiSlider.get()));
-          const nextIndex = Math.min(curIndex + 1, events.length - 1);
-          isFromPlay = true;
-          slider.noUiSlider.set(nextIndex);
-          if (nextIndex < events.length - 1) {
-            setTimeout(advance, 100); // check again soon
-          } else {
-            playing = false;
-            playBtn.textContent = 'Play';
-          }
-        } else if (playing) {
-          setTimeout(advance, 100); // wait for animation
-        }
-      };
-      advance();
-    }
+    const curIndex = Math.round(Number(slider.noUiSlider.get()));
+    const nextIndex = Math.min(curIndex + 1, events.length - 1);
+    isFromPlay = true;
+    slider.noUiSlider.set(nextIndex);
   });
 
   resetBtn.addEventListener('click', () => {
@@ -279,16 +260,28 @@ function initTimeline() {
     slider.noUiSlider.set(0);
   });
 
-  // initialize to the event closest to current date
-  const now = Date.now();
-  let closestIndex = 0;
-  let minDiff = Math.abs(events[0].ts - now);
-  for (let i = 1; i < events.length; i++) {
-    const diff = Math.abs(events[i].ts - now);
-    if (diff < minDiff) {
-      minDiff = diff;
-      closestIndex = i;
-    }
-  }
-  slider.noUiSlider.set(closestIndex);
+  // Toggle controls
+  const toggleControls = document.getElementById('toggle-controls');
+  toggleControls.addEventListener('click', () => {
+    const controls = document.getElementById('controls');
+    controls.classList.toggle('collapsed');
+    toggleControls.textContent = controls.classList.contains('collapsed') ? 'Show Controls' : 'Hide Controls';
+    // Adjust map
+    const map = document.getElementById('map');
+    map.style.left = controls.classList.contains('collapsed') ? '60px' : '0px';
+  });
+
+  // Toggle sidepanel
+  const toggleSidepanel = document.getElementById('toggle-sidepanel');
+  toggleSidepanel.addEventListener('click', () => {
+    const sidepanel = document.getElementById('sidepanel');
+    sidepanel.classList.toggle('collapsed');
+    toggleSidepanel.textContent = sidepanel.classList.contains('collapsed') ? 'Show Details' : 'Hide Details';
+    // Adjust map
+    const map = document.getElementById('map');
+    map.style.right = sidepanel.classList.contains('collapsed') ? '60px' : '320px';
+  });
+
+  // initialize to the first event
+  slider.noUiSlider.set(0);
 }

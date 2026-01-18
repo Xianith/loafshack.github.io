@@ -12,13 +12,22 @@
 
 <body>
   <div id="controls">
-    <div id="date-display">Date: <span id="current-date">—</span></div>
-    <div id="slider"></div>
-    <button id="play">Play</button>
-    <button id="reset">Reset</button>
+    <button id="toggle-controls">Hide Controls</button>
+    <div class="control-content">
+      <div id="date-display">Date: <span id="current-date">—</span></div>
+      <div id="slider"></div>
+      <button id="play">Next</button>
+      <button id="reset">Reset</button>
+      <ul id="event-list"></ul>
+    </div>
   </div>
-  <ul id="event-list"></ul>
   <div id="map"></div>
+  <div id="sidepanel">
+    <button id="toggle-sidepanel">Hide Details</button>
+    <div class="sidepanel-content">
+      <div id="event-description"></div>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.js"></script>
