@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -10,7 +11,7 @@ html, body {
 #map {
   position: absolute;
   top: 140px;
-  bottom: 0;
+  bottom: 160px;
   left: 0;
   right: 0;
 }
@@ -40,7 +41,7 @@ html, body {
   background: #555;
   border: none;
   border-radius: 6px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .noUi-base {
@@ -59,11 +60,12 @@ html, body {
   border-radius: 50%;
   width: 20px;
   height: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
 
-.noUi-handle:before, .noUi-handle:after {
+.noUi-handle:before,
+.noUi-handle:after {
   background: #333;
   width: 2px;
   height: 12px;
@@ -138,4 +140,68 @@ button:active {
 
 .popup-content img:hover {
   transform: scale(1.05);
+}
+
+/* Event List */
+#event-list {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(33, 33, 33, 0.95);
+  color: #e0e0e0;
+  padding: 10px;
+  margin: 0;
+  list-style: none;
+  max-height: 150px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  scrollbar-width: none; /* Firefox */
+}
+
+#event-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+#event-list li {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+#event-list li.current {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #e74c3c;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+#event-list li:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#event-list li div {
+  line-height: 1.2;
+}
+
+#event-list li div:first-child {
+  font-weight: bold;
+}
+
+#event-list li div:nth-child(2) {
+  font-size: 0.8em;
+  color: #cccccc;
+}
+
+#event-list li div:nth-child(3) {
+  font-size: 0.8em;
+  color: #aaaaaa;
 }

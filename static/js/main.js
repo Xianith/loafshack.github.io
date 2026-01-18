@@ -25,6 +25,7 @@ var highlightedIcon = new L.Icon({
 
 var polyline = null;
 var polylines = [];
+var slider;
 
 const markers = [];
 let events = [];
@@ -36,10 +37,11 @@ let animatingLine = null;
 let isFromPlay = false;
 let shouldAnimate = false;
 let cancelAnimation = false;
+let eventListItems = [];
 
 function formatDate(ts) {
   const d = new Date(ts);
-  return d.toISOString().slice(0,10);
+  return d.toISOString().slice(0, 10);
 }
 
 fetch('/events')
@@ -50,15 +52,16 @@ fetch('/events')
       ts: new Date(e.date).getTime()
     }));
     if (events.length === 0) return;
-    events.sort((a,b)=>a.ts-b.ts);
+    events.sort((a, b) => a.ts - b.ts);
     initTimeline();
     addAllMarkers();
+    populateEventList();
   })
   .catch(err => console.error('Failed loading events', err));
 
-function addAllMarkers(){
+function addAllMarkers() {
   events.forEach(ev => {
-    const m = L.marker([ev.lat, ev.lon], {icon: redIcon});
+    const m = L.marker([ev.lat, ev.lon], { icon: redIcon });
     m.bindPopup(`
       <div class="popup-content">
         <h2>${ev.title}</h2>
@@ -72,7 +75,28 @@ function addAllMarkers(){
   });
 }
 
-function updateMarkers(uptoTs){
+function populateEventList() {
+  const eventList = document.getElementById('event-list');
+  events.forEach((ev, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div>${ev.title}</div><div>${ev.city}, ${ev.country}</div><div>${formatDate(ev.ts)}</div>`;
+    li.addEventListener('click', () => {
+      slider.noUiSlider.set(index);
+      map.flyTo([ev.lat, ev.lon], 6, { duration: 0.8 });
+    });
+    eventList.appendChild(li);
+    eventListItems.push(li);
+  });
+}
+
+function highlightCurrentEvent() {
+  eventListItems.forEach((li, i) => li.classList.toggle('current', i === currentIndex));
+  if (currentIndex >= 0 && eventListItems[currentIndex]) {
+    eventListItems[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}
+
+function updateMarkers(uptoTs) {
   markers.forEach(m => {
     const isCurrent = m.evTs === uptoTs;
     m.setIcon(isCurrent ? highlightedIcon : redIcon);
@@ -146,12 +170,12 @@ function updateMarkers(uptoTs){
       const currentLon = newStart.lon + (newEnd.lon - newStart.lon) * progress;
       map.setView([currentLat, currentLon], 6);
       if (!animatingLine) {
-        animatingLine = L.polyline([[newStart.lat, newStart.lon], [currentLat, currentLon]], {color: 'red', weight: 3}).addTo(map);
+        animatingLine = L.polyline([[newStart.lat, newStart.lon], [currentLat, currentLon]], { color: 'red', weight: 3 }).addTo(map);
       } else {
         animatingLine.setLatLngs([[newStart.lat, newStart.lon], [currentLat, currentLon]]);
       }
       if (!drawingMarker) {
-        drawingMarker = L.circleMarker([currentLat, currentLon], {color: 'red', radius: 5, fillOpacity: 1}).addTo(map);
+        drawingMarker = L.circleMarker([currentLat, currentLon], { color: 'red', radius: 5, fillOpacity: 1 }).addTo(map);
       } else {
         drawingMarker.setLatLng([currentLat, currentLon]);
       }
@@ -183,8 +207,8 @@ function updateMarkers(uptoTs){
   }
 }
 
-function initTimeline(){
-  const slider = document.getElementById('slider');
+function initTimeline() {
+  slider = document.getElementById('slider');
   const playBtn = document.getElementById('play');
   const resetBtn = document.getElementById('reset');
   const dateDisplay = document.getElementById('current-date');
@@ -198,7 +222,7 @@ function initTimeline(){
     format: { to: v => Math.round(v), from: v => Number(v) }
   });
 
-  slider.noUiSlider.on('update', (values)=>{
+  slider.noUiSlider.on('update', (values) => {
     const index = Math.round(Number(values[0]));
     const uptoTs = events[index].ts;
     if (index !== currentIndex) {
@@ -212,14 +236,18 @@ function initTimeline(){
     }
     dateDisplay.textContent = formatDate(uptoTs);
     updateMarkers(uptoTs);
+    highlightCurrentEvent();
   });
 
   let playing = false;
 
-  playBtn.addEventListener('click', ()=>{
+  playBtn.addEventListener('click', () => {
     if (playing) {
       playing = false;
       playBtn.textContent = 'Play';
+      if (isAnimating) {
+        cancelAnimation = true;
+      }
       // Note: can't easily cancel recursive setTimeout, but setting playing=false will stop advancing
     } else {
       playing = true;
@@ -244,7 +272,7 @@ function initTimeline(){
     }
   });
 
-  resetBtn.addEventListener('click', ()=>{
+  resetBtn.addEventListener('click', () => {
     if (isAnimating) {
       cancelAnimation = true;
     }

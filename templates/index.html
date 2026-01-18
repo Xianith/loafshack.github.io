@@ -1,24 +1,28 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Map Timeline</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.css" />
-    <link rel="stylesheet" href="/static/css/style.css" />
-  </head>
-  <body>
-    <div id="controls">
-      <div id="date-display">Date: <span id="current-date">—</span></div>
-      <div id="slider"></div>
-      <button id="play">Play</button>
-      <button id="reset">Reset</button>
-    </div>
-    <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.js"></script>
-    <script src="/static/js/main.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Map Timeline</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.css" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+  <div id="controls">
+    <div id="date-display">Date: <span id="current-date">—</span></div>
+    <div id="slider"></div>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+  </div>
+  <ul id="event-list"></ul>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+
 </html>
