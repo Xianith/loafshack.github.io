@@ -86,6 +86,17 @@ function populateEventList() {
     });
     eventList.appendChild(li);
     eventListItems.push(li);
+    // Add spacer arrow between events
+    if (index < events.length - 1) {
+      const spacer = document.createElement('li');
+      spacer.className = 'spacer';
+      spacer.innerHTML = '→';
+      spacer.addEventListener('click', () => {
+        isFromPlay = true;
+        slider.noUiSlider.set(index + 1);
+      });
+      eventList.appendChild(spacer);
+    }
   });
   // Click the first event on init
   if (eventListItems.length > 0) {
@@ -246,19 +257,19 @@ function initTimeline() {
     desc.innerHTML = `<h2>${events[index].title}</h2><h3>${events[index].date}</h3><p>${events[index].description || 'No description available'}</p>`;
   });
 
-  playBtn.addEventListener('click', () => {
-    const curIndex = Math.round(Number(slider.noUiSlider.get()));
-    const nextIndex = Math.min(curIndex + 1, events.length - 1);
-    isFromPlay = true;
-    slider.noUiSlider.set(nextIndex);
-  });
+  // playBtn.addEventListener('click', () => {
+  //   const curIndex = Math.round(Number(slider.noUiSlider.get()));
+  //   const nextIndex = Math.min(curIndex + 1, events.length - 1);
+  //   isFromPlay = true;
+  //   slider.noUiSlider.set(nextIndex);
+  // });
 
-  resetBtn.addEventListener('click', () => {
-    if (isAnimating) {
-      cancelAnimation = true;
-    }
-    slider.noUiSlider.set(0);
-  });
+  // resetBtn.addEventListener('click', () => {
+  //   if (isAnimating) {
+  //     cancelAnimation = true;
+  //   }
+  //   slider.noUiSlider.set(0);
+  // });
 
   // Toggle controls
   const toggleControls = document.getElementById('toggle-controls');
@@ -276,10 +287,10 @@ function initTimeline() {
   toggleSidepanel.addEventListener('click', () => {
     const sidepanel = document.getElementById('sidepanel');
     sidepanel.classList.toggle('collapsed');
-    toggleSidepanel.textContent = sidepanel.classList.contains('collapsed') ? 'Show Details' : 'Hide Details';
+    toggleSidepanel.textContent = sidepanel.classList.contains('collapsed') ? 'Show' : 'Hide';
     // Adjust map
-    const map = document.getElementById('map');
-    map.style.right = sidepanel.classList.contains('collapsed') ? '60px' : '320px';
+    // const map = document.getElementById('map');
+    // map.style.right = sidepanel.classList.contains('collapsed') ? '60px' : '320px';
   });
 
   // initialize to the first event
